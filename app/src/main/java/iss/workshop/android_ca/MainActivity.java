@@ -354,13 +354,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
         if (selected_6Uri.size() < 6 && !selected_6Uri.contains(selected_imgUri)){
             ConstraintLayout image_container = (ConstraintLayout) view.getParent();
-            image_container.setBackgroundColor(Color.parseColor("#FF0000"));
+            image_container.setBackgroundColor(Color.parseColor("#FF0000")); // red
 
             selected_6Uri.add(selected_imgUri);
         }
         else if (selected_6Uri.contains(selected_imgUri)){
             ConstraintLayout image_container = (ConstraintLayout) view.getParent();
-            image_container.setBackgroundColor(Color.parseColor("#FFFFFF"));
+            image_container.setBackgroundColor(Color.parseColor("#FFFFFF")); // white
 
             selected_6Uri.remove(selected_imgUri);
         }
