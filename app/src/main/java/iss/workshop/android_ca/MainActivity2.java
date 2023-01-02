@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
 
 public class MainActivity2 extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
 
@@ -116,7 +117,8 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             gridView.setEnabled(true);
 
             Button gameModeBtn = findViewById(R.id.btn_ChangeMode);
-            gameModeBtn.setEnabled(true);
+            gameModeBtn.setEnabled(false);
+            view.setEnabled(false); // view = start button
 
             timer = findViewById(R.id.playtime);
 
@@ -163,7 +165,6 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         }
 
         // second click
-
         // 1) Display 2nd image clicked. Always true
         if (firstImage_Pos != position) {
             img_view.setImageURI(imageList.get(position));
@@ -182,6 +183,16 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             }
         };
         img_view.postDelayed(checker, 1000);
+
+        // when checking is happening, disable gridview. enable again after checking (1.5s later)
+        gridView.setEnabled(false);
+        Runnable enableGridView = new Runnable() {
+            @Override
+            public void run() {
+                gridView.setEnabled(true);
+            }
+        };
+        img_view.postDelayed(enableGridView, 1500);
 
     }
 
@@ -314,6 +325,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             @Override
             public void onClick(View view) {
                 player1_namefield.setEnabled(true);
+                player2_namefield.setEnabled(false);
                 confirmBtn.setEnabled(true);
 
                 // set game mode for game object, instantiated oncreate
@@ -343,12 +355,31 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 String player1Name = (name1.isEmpty() || name1 == null) ? "Player 1" : name1;
                 String player2Name = (name2.isEmpty() || name2 == null) ? "Player 2" : name2;
 
+                // set default visibility for player names (for clicking confirm button multiple times)
+                tv_p1.setVisibility(View.VISIBLE);
+                tv_p2.setVisibility(View.VISIBLE);
+
                 if (game.getGameMode() == 0){
+                    // set player names
                     game.setPlayer1_name(player1Name);
                     game.setPlayer2_name(player2Name);
+
+                    // set layout for multiplayer
+                    TextView gameMode_tv = findViewById(R.id.mode_of_game);
+                    gameMode_tv.setText("VS MODE");
+                    tv_p1.setText(game.getPlayer1_name() + " : 0");
+                    tv_p2.setText(game.getPlayer2_name() + " : 0");
                 }
                 else if (game.getGameMode() == 1){
+                    // set player 1 name
                     game.setPlayer1_name(player1Name);
+
+                    // set layout for single player
+                    TextView gameMode_tv = findViewById(R.id.mode_of_game);
+                    gameMode_tv.setText("SINGLE MODE");
+                    tv_p1.setText("Player: " + game.getPlayer1_name());
+//                    tv_p1.setVisibility(View.INVISIBLE);
+                    tv_p2.setVisibility(View.INVISIBLE);
                 }
 
                 // activate start button in main game

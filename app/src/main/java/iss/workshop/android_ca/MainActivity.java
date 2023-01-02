@@ -3,6 +3,7 @@ package iss.workshop.android_ca;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -17,8 +18,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -346,13 +349,19 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
     // for selecting 6 images
     @Override
-    public void onImageClick(int position){
+    public void onImageClick(int position, View view){
         Uri selected_imgUri = uri.get(position);
 
         if (selected_6Uri.size() < 6 && !selected_6Uri.contains(selected_imgUri)){
+            ConstraintLayout image_container = (ConstraintLayout) view.getParent();
+            image_container.setBackgroundColor(Color.parseColor("#FF0000"));
+
             selected_6Uri.add(selected_imgUri);
         }
         else if (selected_6Uri.contains(selected_imgUri)){
+            ConstraintLayout image_container = (ConstraintLayout) view.getParent();
+            image_container.setBackgroundColor(Color.parseColor("#FFFFFF"));
+
             selected_6Uri.remove(selected_imgUri);
         }
         else{

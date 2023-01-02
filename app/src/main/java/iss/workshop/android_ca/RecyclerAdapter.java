@@ -66,7 +66,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 @Override
                 public void onClick(View view) {
                     int position = getAdapterPosition();
-                    recyclerViewInterface.onImageClick(position);
+                    recyclerViewInterface.onImageClick(position, view);
                 }
             });
         }
