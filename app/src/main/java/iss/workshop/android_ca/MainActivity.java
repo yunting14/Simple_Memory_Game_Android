@@ -1,5 +1,6 @@
 package iss.workshop.android_ca;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -92,31 +93,30 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         dir =cw.getDir("imageDir",Context.MODE_PRIVATE);
 
-        uri = LoadImageUri();
+
+            uri = LoadImageUri();
 
 //        // Set layout
 //        for(int i=0; i<20;i++){
 //            dummies.add(dummy);
 //        }
-        if(uri.size()==20){
-            adapter = new RecyclerAdapter((ArrayList<Uri>) uri, this);        }
+            if (uri.size() == 20) {
+                adapter = new RecyclerAdapter((ArrayList<Uri>) uri, this);
+            }
 
 
             // set 5 x 4
-        recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 4));
-        recyclerView.setAdapter(adapter);
+            recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 4));
+            recyclerView.setAdapter(adapter);
 
-        // an empty thread. not sure what this is for?
-        HomePage hm = new HomePage();
-        hm.execute();
-        context = this;
+            // an empty thread. not sure what this is for?
+            HomePage hm = new HomePage();
+            hm.execute();
+            context = this;
 
-        // give permission to access external storage
-        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(MainActivity.this,
-                    new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, Read_Permission);
-        }
+
+
+
 
         // listening for fetch button to start download
         mFetchBtn = findViewById(R.id.btnFetch);
@@ -278,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     // 1) download from URL -> byte[]
     // 2) store in external folder "app_imageDir -> jpg
     // 3) set image into recyclerView
-    protected void startDownloadImage(String imgURL, int num){
+    protected void startDownloadImage( String imgURL, int num){
         String destFilename =
                 String.valueOf(num) + imgURL.lastIndexOf(".")+1;
 
@@ -318,12 +318,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     protected ArrayList<Uri> LoadImageUri(){
         ArrayList<Uri> loadImageuris = new ArrayList<>();
 
-        for(int i = 1; i<=20; i++){
-            File imageFile = new File(dir, "Img" + String.valueOf(i)+".jpg");
-            Uri uriImg= Uri.fromFile(imageFile);
+            for (int i = 1; i <= 20; i++) {
+            File imageFile = new File(dir, "Img" + String.valueOf(i) + ".jpg");
+            Uri uriImg = Uri.fromFile(imageFile);
             loadImageuris.add(uriImg);
-        }
+            }
         return loadImageuris;
+
+
     }
 
     // byte[] --> jpg file. Returns Uri of the jpg image
