@@ -7,6 +7,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.FileInputStream;
@@ -57,7 +58,7 @@ public class LeaderBoard extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public static void saveLeaderBoard(HashMap<String,Integer> scoreList){
+    public static void saveLeaderBoard(@NonNull HashMap<String,Integer> scoreList){
 
         HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
                 .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
@@ -75,7 +76,7 @@ public class LeaderBoard extends AppCompatActivity {
     }
 
     public static HashMap<String,Integer> loadLeaderBoard(){
-        HashMap<String,Integer> scoreList = null;
+        HashMap<String,Integer> scoreList = new HashMap<>();
         try
         {
             FileInputStream fileInputStream  = new FileInputStream("scoreList.bin");
