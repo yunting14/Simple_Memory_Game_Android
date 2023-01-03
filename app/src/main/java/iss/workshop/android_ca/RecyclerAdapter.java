@@ -72,16 +72,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         }
     }
 
-    //Getting selected when btn clicked
-    public ArrayList<Uri> getSelected(){
-        ArrayList<Uri> selected = new ArrayList<>();
 
-        for(int i=0; i<uriArrayList.size();i++){
-
-        }
-
-        return null;
-    }
 
 
 }

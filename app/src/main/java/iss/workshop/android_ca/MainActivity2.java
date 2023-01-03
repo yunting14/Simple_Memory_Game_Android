@@ -3,6 +3,8 @@ package iss.workshop.android_ca;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,10 +14,12 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -30,7 +34,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 
+import kotlin.LateinitKt;
+
 public class MainActivity2 extends AppCompatActivity implements AdapterView.OnItemClickListener, View.OnClickListener {
+
+
 
     // playing Grid
     GridView gridView;
@@ -43,6 +51,10 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
     ImageView secondImageSelected;
     int secondImage_Pos;
 
+    //Count up timer
+    Chronometer chronometer;
+    private long pauseOffset;
+    private boolean running;
     //turn
     int turn = 1;
 
@@ -66,6 +78,9 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
     // Game object
     Game game;
 
+//    AnimatorSet setRightOut;
+//    AnimatorSet setLeftIn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,6 +101,12 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         ImageAdaptor imageAdaptor = new ImageAdaptor(this);
         gridView.setAdapter(imageAdaptor);
         gridView.setEnabled(false);
+
+//         setRightOut =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
+//                R.animator.front_animation);
+//
+//         setLeftIn =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
+//                R.animator.back_animation);
 
         // set onItemClickListener for playing Grid
         gridView.setOnItemClickListener(this);
@@ -121,16 +142,20 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             view.setEnabled(false); // view = start button
 
             timer = findViewById(R.id.playtime);
+            chronometer = findViewById(R.id.playtime);
+            chronometer.setFormat("Time: %s");
 
-            new CountDownTimer(240 * 1000, 1000) {
-                public void onTick(long millisUntilFinished) {
-                    timer.setText("TIME LEFT: " + millisUntilFinished / 1000 + "s");
-                }
+            startTimer();
 
-                public void onFinish() {
-                    showGameResults();
-                }
-            }.start();
+//            new CountDownTimer(240 * 1000, 1000) {
+////                public void onTick(long millisUntilFinished) {
+////                    timer.setText("TIME : " + millisUntilFinished / 1000 + "s");
+////                }
+////
+////                public void onFinish() {
+////                    showGameResults();
+////                }
+////            }.start();
 
             // default layout is multi-player. if single player, change layout
             // YT - not working... 9.10pm
@@ -146,6 +171,26 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             }
         }
     }
+    //Start Timer
+    private void startTimer() {
+        if(!running){
+            chronometer.setBase(SystemClock.elapsedRealtime()-pauseOffset);
+            chronometer.start();
+            running = true;
+        }
+    }
+
+    private void pauseTimer(){
+        if(running){
+            chronometer.stop();
+            pauseOffset = SystemClock.elapsedRealtime()-chronometer.getBase();
+            running = false;
+        }
+    }
+    private void resetTimer(){
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        pauseOffset = 0;
+    }
 
     // FOR GRID VIEW
     @Override
@@ -159,6 +204,11 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             // Diplay image
             firstImage_Pos = position;
             firstImageSelected = img_view;
+//            setRightOut.setTarget(imageList.get(position));
+//            setLeftIn.setTarget(R.drawable.question_mark);
+//            setRightOut.start();
+//            setLeftIn.start();
+
             img_view.setImageURI(imageList.get(position));
 
             return;
@@ -167,7 +217,13 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         // second click
         // 1) Display 2nd image clicked. Always true
         if (firstImage_Pos != position) {
+
             img_view.setImageURI(imageList.get(position));
+//            setRightOut.setTarget(imageList.get(position));
+//            setLeftIn.setTarget(R.drawable.question_mark);
+//            setRightOut.start();
+//            setLeftIn.start();
+
             secondImageSelected = img_view;
             secondImage_Pos = position;
         }
@@ -204,6 +260,15 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             // if not same
             firstImageSelected.setImageResource(R.drawable.question_mark);
             secondImageSelected.setImageResource(R.drawable.question_mark);
+
+//            setRightOut.setTarget(R.drawable.question_mark);
+//            setLeftIn.setTarget(firstImageSelected);
+//            setRightOut.start();
+//            setLeftIn.start();
+//            setRightOut.setTarget(R.drawable.question_mark);
+//            setLeftIn.setTarget(secondImageSelected);
+//            setRightOut.start();
+//            setLeftIn.start();
         }
         else{
             // if same
@@ -223,6 +288,8 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             if(p1_score+p2_score==6){
                 game.setPlayer1_score(p1_score);
                 game.setPlayer2_score(p2_score);
+                pauseTimer();
+                resetTimer();
                 showGameResults();
             }
         }
