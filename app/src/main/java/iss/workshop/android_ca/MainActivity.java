@@ -51,6 +51,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     List <String> imgURLS = new ArrayList<>(); // list of 20 image Urls from website (eg stocksnap.io)
 
     List<Uri> uri; // list of 20 Uri referring to 20 jpg images in external storage
+    HashMap<String, Integer> leaderBoard;
 
     // for placement of first 20 blank
     Uri dummy = Uri.parse("https://cdn-icons-png.flaticon.com/512/59/59836.png");
@@ -85,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        Button mLeaderBoardBtn;
         mURL = findViewById(R.id.urlTxt);
         recyclerView = findViewById(R.id.recyclerView);
         progressBar = findViewById(R.id.progressBar);
@@ -144,6 +146,24 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             }
         });
 
+
+        leaderBoard = LeaderBoard.loadLeaderBoard();
+
+        mLeaderBoardBtn = findViewById(R.id.leaderBoard_button);
+
+        if(leaderBoard == null){
+            mLeaderBoardBtn.setEnabled(false);
+        }
+        if(leaderBoard!=null){
+            mLeaderBoardBtn.setEnabled(true);
+        }
+
+        mLeaderBoardBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startleaderBoard(leaderBoard);
+            }
+        });
         // to set first download progress?
         if(mURL != null){
             SharedPreferences pref =
@@ -161,6 +181,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                 confirmBtnClicked();
             }
         });
+    }
+
+    private void startleaderBoard(HashMap<String, Integer> scoreList) {
+        ArrayList<String> playerNames = new ArrayList<>(scoreList.keySet());
+        ArrayList<Integer> playerScores = new ArrayList<>(scoreList.values());
+
+        Intent intent = new Intent(this, LeaderBoard.class);
+        intent.putStringArrayListExtra("names", playerNames);
+        intent.putIntegerArrayListExtra("scores", playerScores);
+        startActivity(intent);
     }
 
     public class HomePage extends AsyncTask<Void, Void, Void>{

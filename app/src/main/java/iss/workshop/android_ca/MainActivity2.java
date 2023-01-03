@@ -31,6 +31,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 
@@ -43,6 +44,8 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
     // playing Grid
     GridView gridView;
 
+    HashMap<String, Integer> leaderBoard2;
+
     // first image that is clicked
     ImageView firstImageSelected = null;
     int firstImage_Pos = -1; // 0-11
@@ -50,6 +53,9 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
     // second image clicked
     ImageView secondImageSelected;
     int secondImage_Pos;
+
+    // List of imageViews that have been matched
+    List<ImageView> matched_imageViews = new ArrayList<>();
 
     //Count up timer
     Chronometer chronometer;
@@ -88,6 +94,8 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 
         tv_p1 = (TextView) findViewById(R.id.tv_ply1);
         tv_p2 = (TextView) findViewById(R.id.tv_ply2);
+
+        leaderBoard2 = LeaderBoard.loadLeaderBoard();
 
         //starts from player 1
         tv_p1.setTextColor(Color.GREEN);
@@ -258,8 +266,12 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 
         if (!firstImageUri.equals(secondImageUri)) {
             // if not same
-            firstImageSelected.setImageResource(R.drawable.question_mark);
-            secondImageSelected.setImageResource(R.drawable.question_mark);
+            if (!matched_imageViews.contains(firstImageSelected)){
+                firstImageSelected.setImageResource(R.drawable.question_mark);
+            }
+            if (!matched_imageViews.contains(secondImageSelected)){
+                secondImageSelected.setImageResource(R.drawable.question_mark);
+            }
 
 //            setRightOut.setTarget(R.drawable.question_mark);
 //            setLeftIn.setTarget(firstImageSelected);
@@ -274,6 +286,9 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             // if same
             firstImageSelected.setEnabled(false);
             secondImageSelected.setEnabled(false);
+
+            matched_imageViews.add(firstImageSelected);
+            matched_imageViews.add(secondImageSelected);
 
             // give score
             if (turn == 1) {
@@ -291,6 +306,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 pauseTimer();
                 resetTimer();
                 showGameResults();
+
             }
         }
 
