@@ -89,8 +89,14 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
     // Game object
     Game game;
 
-//    AnimatorSet setRightOut;
-//    AnimatorSet setLeftIn;
+    AnimatorSet setRightOut;
+    AnimatorSet setLeftIn;
+    AnimatorSet setRightOut2;
+    AnimatorSet setLeftIn2;
+    AnimatorSet setRightOut3;
+    AnimatorSet setLeftIn3;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +114,18 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 
         // this fills a list of 12 images, with the 2 selected images from internal storage
         fillArray();
+        setRightOut =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
+                R.animator.front_animation);
+        setLeftIn =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
+                R.animator.back_animation);
+        setRightOut2 =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
+                R.animator.back_animation2);
+        setLeftIn2 =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
+                R.animator.back_animation2);
+        setRightOut3 =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
+                R.animator.front_animation3);
+        setLeftIn3 =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
+                R.animator.back_animation3);
 
 
         // build sound pool
@@ -129,11 +147,6 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         gridView.setAdapter(imageAdaptor);
         gridView.setEnabled(false);
 
-//         setRightOut =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
-//                R.animator.front_animation);
-//
-//         setLeftIn =(AnimatorSet) AnimatorInflater.loadAnimator(getApplicationContext(),
-//                R.animator.back_animation);
 
         // set onItemClickListener for playing Grid
         gridView.setOnItemClickListener(this);
@@ -190,7 +203,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 TextView gameMode_tv = findViewById(R.id.mode_of_game);
                 gameMode_tv.setText("SINGLE MODE");
                 tv_p1.setVisibility(View.INVISIBLE);
-                tv_p2.setVisibility(View.INVISIBLE);
+                tv_p2.setVisibility(View.GONE);
             }
             else if (game.getGameMode() == 0){
                 tv_p1.setText(game.getPlayer1_name() + " : 0");
@@ -206,7 +219,6 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             running = true;
         }
     }
-
     private void pauseTimer(){
         if(running){
             chronometer.stop();
@@ -224,37 +236,40 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         ImageView img_view = (ImageView) view;
-        PlaySound();
+
         //first clicked
         if (firstImage_Pos < 0) {
 
-            // Diplay image
+            // Display image
+
             firstImage_Pos = position;
             firstImageSelected = img_view;
-//            setRightOut.setTarget(imageList.get(position));
-//            setLeftIn.setTarget(R.drawable.question_mark);
-//            setRightOut.start();
-//            setLeftIn.start();
-
+            setRightOut.setTarget(firstImageSelected);
+            setLeftIn.setTarget(R.drawable.question_mark);
+            setRightOut.start();
+            setLeftIn.start();
+            PlaySound();
             img_view.setImageURI(imageList.get(position));
-
             return;
         }
 
         // second click
         // 1) Display 2nd image clicked. Always true
         if (firstImage_Pos != position) {
+//            PlaySound();
+            secondImage_Pos = position;
+            secondImageSelected = img_view;
+
 
             img_view.setImageURI(imageList.get(position));
-//            setRightOut.setTarget(imageList.get(position));
-//            setLeftIn.setTarget(R.drawable.question_mark);
-//            setRightOut.start();
-//            setLeftIn.start();
+            setRightOut2.setTarget(secondImageSelected);
+            setLeftIn2.setTarget(R.drawable.question_mark);
+            setRightOut2.start();
+            setLeftIn2.start();
 
-            secondImageSelected = img_view;
-            secondImage_Pos = position;
+
         }
-
+        gridView.setEnabled(false);
         // 2) check if the 2 images are the same.
         // if not same, change back.
         // if same, give score.
@@ -262,20 +277,23 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         Runnable checker = new Runnable() {
             @Override
             public void run() {
-                checkImagesAndScore();
-            }
-        };
-        img_view.postDelayed(checker, 500);
 
-        // when checking is happening, disable gridview. enable again after checking (1.5s later)
-        gridView.setEnabled(false);
-        Runnable enableGridView = new Runnable() {
-            @Override
-            public void run() {
+                checkImagesAndScore();
                 gridView.setEnabled(true);
             }
         };
-        img_view.postDelayed(enableGridView, 1500);
+
+        img_view.postDelayed(checker, 900);
+
+//         when checking is happening, disable gridview. enable again after checking (1.5s later)
+
+//        Runnable enableGridView = new Runnable() {
+//            @Override
+//            public void run() {
+//                gridView.setEnabled(true);
+//            }
+//        };
+//        img_view.postDelayed(enableGridView, 100);
 
     }
 
@@ -296,17 +314,23 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 secondImageSelected.setImageResource(R.drawable.question_mark);
             }
 
-//            setRightOut.setTarget(R.drawable.question_mark);
-//            setLeftIn.setTarget(firstImageSelected);
-//            setRightOut.start();
-//            setLeftIn.start();
-//            setRightOut.setTarget(R.drawable.question_mark);
-//            setLeftIn.setTarget(secondImageSelected);
-//            setRightOut.start();
-//            setLeftIn.start();
+            setRightOut.setTarget(R.drawable.question_mark);
+            setLeftIn.setTarget(firstImageSelected);
+            setRightOut.start();
+            setLeftIn.start();
+
+
+            setRightOut3.setTarget(R.drawable.question_mark);
+            setLeftIn3.setTarget(secondImageSelected);
+            setRightOut3.start();
+            setLeftIn3.start();
+
+            firstImageSelected.setImageResource(R.drawable.question_mark);
+            secondImageSelected.setImageResource(R.drawable.question_mark);
         }
         else{
             // if same
+
             firstImageSelected.setEnabled(false);
             secondImageSelected.setEnabled(false);
 
@@ -439,8 +463,10 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             @Override
             public void onClick(View view) {
                 player1_namefield.setEnabled(true);
-                player2_namefield.setEnabled(false);
+//                player2_namefield.setEnabled(false);
+                player2_namefield.setVisibility(View.GONE);
                 confirmBtn.setEnabled(true);
+
 
                 // set game mode for game object, instantiated oncreate
                 game.setGameMode(1);
@@ -451,6 +477,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             @Override
             public void onClick(View view) {
                 player1_namefield.setEnabled(true);
+                player2_namefield.setVisibility(View.VISIBLE);
                 player2_namefield.setEnabled(true);
                 confirmBtn.setEnabled(true);
 

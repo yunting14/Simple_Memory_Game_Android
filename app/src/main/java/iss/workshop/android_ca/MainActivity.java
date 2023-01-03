@@ -117,9 +117,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             context = this;
 
 
-
-
-
         // listening for fetch button to start download
         mFetchBtn = findViewById(R.id.btnFetch);
         mFetchBtn.setOnClickListener(new View.OnClickListener() {

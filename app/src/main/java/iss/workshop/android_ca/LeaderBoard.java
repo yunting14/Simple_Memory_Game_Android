@@ -65,7 +65,7 @@ public class LeaderBoard extends AppCompatActivity {
                         .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
         try
         {
-            FileOutputStream fileOutputStream = new FileOutputStream("scoreList.bin");
+            FileOutputStream fileOutputStream = new FileOutputStream("scoreList.txt");
             ObjectOutputStream objectOutputStream= new ObjectOutputStream(fileOutputStream);
 
             objectOutputStream.writeObject(sortedHM);
@@ -79,7 +79,7 @@ public class LeaderBoard extends AppCompatActivity {
         HashMap<String,Integer> scoreList = new HashMap<>();
         try
         {
-            FileInputStream fileInputStream  = new FileInputStream("scoreList.bin");
+            FileInputStream fileInputStream  = new FileInputStream("scoreList.txt");
             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
 
             scoreList = (HashMap) objectInputStream.readObject();
