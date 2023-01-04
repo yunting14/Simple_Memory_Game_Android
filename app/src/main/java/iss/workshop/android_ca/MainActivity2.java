@@ -300,7 +300,11 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             }
         };
 
+<<<<<<< HEAD
         img_view.postDelayed(checker, 1200);
+=======
+        img_view.postDelayed(checker, 2000);
+>>>>>>> d2da0a11c578905430c2ff63355fa225925dd45a
 
 //         when checking is happening, disable gridview. enable again after checking (1.5s later)
 
@@ -353,8 +357,10 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         else{
             // if same
             PlaySound(correctsound);
-            firstImageSelected.setEnabled(false);
-            secondImageSelected.setEnabled(false);
+//            firstImageSelected.setEnabled(false);
+//            secondImageSelected.setEnabled(false);
+            firstImageSelected.setOnClickListener(null);
+            secondImageSelected.setOnClickListener(null);
 
             matched_imageViews.add(firstImageSelected);
             matched_imageViews.add(secondImageSelected);
