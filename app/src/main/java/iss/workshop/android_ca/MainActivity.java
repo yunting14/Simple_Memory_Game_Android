@@ -37,7 +37,11 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewInterface {
     EditText mURL; // where URL is placed
@@ -48,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     List <String> imgURLS = new ArrayList<>(); // list of 20 image Urls from website (eg stocksnap.io)
 
     List<Uri> uri; // list of 20 Uri referring to 20 jpg images in external storage
-    HashMap<String, Integer> leaderBoard;
 
     // for placement of first 20 blank
 //    Uri dummy = Uri.parse("https://cdn-icons-png.flaticon.com/512/59/59836.png");
@@ -125,17 +128,11 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         });
 
 
-        leaderBoard = loadLeaderBoard();
 
         mLeaderBoardBtn = findViewById(R.id.leaderBoard_button);
 
-        if(leaderBoard == null){
-            mLeaderBoardBtn.setEnabled(false);
-        }
-        if(leaderBoard!=null){
-            mLeaderBoardBtn.setEnabled(true);
-        }
-        mLeaderBoardBtn.setOnClickListener(view -> startleaderBoard(leaderBoard));
+       mLeaderBoardBtn.setOnClickListener(view->
+               startleaderBoard(loadLeaderBoard()));
 
         // to set first download progress?
         if(mURL != null){
@@ -441,27 +438,19 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             startActivity(intent);
     }
 
-    public HashMap<String,Integer> loadLeaderBoard(){
+    protected HashMap<String,Integer> loadLeaderBoard(){
+        SharedPreferences splb = getSharedPreferences("leaderBoard", MODE_PRIVATE);
+        List<String> lbNames = new ArrayList<>(splb.getStringSet("lbNames", new HashSet<>()));
         HashMap<String,Integer> scoreList = new HashMap<>();
-        File lbs = getLeaderBoardFile();
-        try
-        {
-            FileInputStream fileInputStream  = new FileInputStream(lbs);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-
-            scoreList = (HashMap) objectInputStream.readObject();
-            objectInputStream.close();
-            return scoreList;
+        if(lbNames.size()>0) {
+            for (int i = 0; i < lbNames.size(); i++) {
+                String tempName = lbNames.get(i);
+                scoreList.put(tempName, splb.getInt(tempName,0));
+            }
         }
-        catch(ClassNotFoundException | IOException | ClassCastException e) {
-            e.printStackTrace();
-        }
-        return scoreList;
-    }
-
-    public File getLeaderBoardFile(){
-        String filePath = "LBfolder";
-        String fileName = "LBS.txt";
-        return new File(getFilesDir(),  filePath + "/" + fileName);
+        HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
+                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+                        .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
+        return sortedHM;
     }
 }

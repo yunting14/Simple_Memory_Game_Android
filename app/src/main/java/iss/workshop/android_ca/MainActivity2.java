@@ -9,6 +9,7 @@ import android.animation.AnimatorSet;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.media.AudioAttributes;
@@ -30,19 +31,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Timer;
 import java.util.stream.Collectors;
 
@@ -292,7 +291,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             }
         };
 
-        img_view.postDelayed(checker, 900);
+        img_view.postDelayed(checker, 10);
 
 //         when checking is happening, disable gridview. enable again after checking (1.5s later)
 
@@ -548,6 +547,10 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 
         if(game.getPlayer2_name() != null){
             p1Win = game.getPlayer1_score()> game.getPlayer2_score();
+        }else if(game.getPlayer2_name() == null && game.getPlayer2_score() != 0){
+            int temp = game.getPlayer1_score() + game.getPlayer2_score();
+            game.setPlayer1_score(temp);
+            game.setPlayer2_score(0);
         }
         if(leaderBoard2 == null){
             leaderBoard2 = new HashMap<>();
@@ -564,66 +567,51 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         }
 
         if(leaderBoard2.size()==10){
+
             String cPName = new ArrayList<>(leaderBoard2.keySet()).get(9);
             int cPScore = leaderBoard2.get(cPName);
-            if(p1Win && game.getPlayer1_score()>cPScore){
-                leaderBoard2.remove(cPName);
-                leaderBoard2.put(game.getPlayer1_name(), game.getPlayer1_score());
-                saveLeaderBoard(leaderBoard2);
-                leaderBoard2 = loadLeaderBoard();
-                return true;
-            }else if(game.getPlayer2_score()>cPScore){
-                leaderBoard2.remove(cPName);
-                leaderBoard2.put(game.getPlayer2_name(), game.getPlayer2_score());
-                saveLeaderBoard(leaderBoard2);
-                leaderBoard2 = loadLeaderBoard();
-                return true;
-            }
 
+            if(game.getPlayer1_score()>cPScore || game.getPlayer2_score()>cPScore){
+                leaderBoard2.remove(cPName);
+                saveLeaderBoard(leaderBoard2);
+                IsAchieveLeaderBoard();
+            }
         }
 
         return false;
     }
 
-    public void saveLeaderBoard(@NonNull HashMap<String,Integer> scoreList){
-        File lbs = getLeaderBoardFile();
+    protected void saveLeaderBoard(@NonNull HashMap<String,Integer> scoreList){
+        SharedPreferences splb = getSharedPreferences("leaderBoard", MODE_PRIVATE);
+        SharedPreferences.Editor editor = splb.edit();
         HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
                 .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
                         .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
-        try
-        {
-            FileOutputStream fileOutputStream = new FileOutputStream(lbs);
-            ObjectOutputStream objectOutputStream= new ObjectOutputStream(fileOutputStream);
-
-            objectOutputStream.writeObject(sortedHM);
-            objectOutputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        List<String> lbNames = new ArrayList<>(sortedHM.keySet());
+        List<Integer> lbScores = new ArrayList<>(sortedHM.values());
+        for(int i=0; i<sortedHM.size(); i++){
+            editor.putInt(lbNames.get(i),lbScores.get(i));
+            editor.putStringSet("lbNames", sortedHM.keySet());
+            editor.commit();
         }
+
     }
 
-    public HashMap<String,Integer> loadLeaderBoard(){
+    protected HashMap<String,Integer> loadLeaderBoard(){
+        SharedPreferences splb = getSharedPreferences("leaderBoard", MODE_PRIVATE);
+        List<String> lbNames = new ArrayList<>(splb.getStringSet("lbNames", new HashSet<>()));
+
         HashMap<String,Integer> scoreList = new HashMap<>();
-        File lbs = getLeaderBoardFile();
-        try
-        {
-            FileInputStream fileInputStream  = new FileInputStream(lbs);
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-
-            scoreList = (HashMap) objectInputStream.readObject();
-            objectInputStream.close();
-            return scoreList;
+        if(lbNames.size()>0) {
+            for (int i = 0; i < lbNames.size(); i++) {
+                String nam = lbNames.get(i);
+                scoreList.put(nam, splb.getInt(nam,0));
+            }
         }
-        catch(ClassNotFoundException | IOException | ClassCastException e) {
-            e.printStackTrace();
-        }
-        return scoreList;
-    }
-
-    public File getLeaderBoardFile(){
-        String filePath = "LBfolder";
-        String fileName = "LBS.txt";
-        return new File(getFilesDir(),  filePath + "/" + fileName);
+        HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
+                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+                        .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
+        return sortedHM;
     }
 
 }

@@ -2,6 +2,7 @@ package iss.workshop.android_ca;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -19,8 +20,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class LeaderBoard extends AppCompatActivity {
@@ -28,6 +32,8 @@ public class LeaderBoard extends AppCompatActivity {
     ArrayList<String> names;
     ArrayList<Integer>scores;
     Button backButt;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +57,7 @@ public class LeaderBoard extends AppCompatActivity {
                 startHomePage();
             }
         });
+
 
 
     }
