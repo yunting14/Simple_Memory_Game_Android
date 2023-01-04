@@ -353,8 +353,8 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         else{
             // if same
             PlaySound(correctsound);
-            firstImageSelected.setEnabled(false);
-            secondImageSelected.setEnabled(false);
+            firstImageSelected.setOnClickListener(null);
+            secondImageSelected.setOnClickListener(null);
 
             matched_imageViews.add(firstImageSelected);
             matched_imageViews.add(secondImageSelected);

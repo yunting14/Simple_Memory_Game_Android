@@ -79,13 +79,13 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         dir =cw.getDir("imageDir",Context.MODE_PRIVATE);
 
+        if(checkFolderEmpty(dir)){
 
             uri = LoadImageUri();
-
+        }
+        else {
+            uri = LoadImageUri();
 //        // Set layout
-//        for(int i=0; i<20;i++){
-//            dummies.add(dummy);
-//        }
             if (uri.size() == 20) {
                 adapter = new RecyclerAdapter((ArrayList<Uri>) uri, this);
             }
@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             HomePage hm = new HomePage();
             hm.execute();
             context = this;
+        }
 
 
         // listening for fetch button to start download
@@ -107,11 +108,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
             @Override
             public void onClick(View view) {
-
-                adapter = new RecyclerAdapter((ArrayList<Uri>) uri, MainActivity.this); // empty uri
-                recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 4));
-                recyclerView.setAdapter(adapter);
-
 //                uri = new ArrayList<>();
                 currentProgress = 0;
                 url = mURL.getText().toString();
@@ -120,7 +116,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                     ,Toast.LENGTH_SHORT).show();
                 }
                 else{
-
+                    adapter = new RecyclerAdapter((ArrayList<Uri>) uri, MainActivity.this); // empty uri
+                    recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 4));
+                    recyclerView.setAdapter(adapter);
                     WebScrape ws = new WebScrape();
                     ws.execute();
                 }
@@ -151,6 +149,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                 confirmBtnClicked();
             }
         });
+    }
+
+    private boolean checkFolderEmpty(File dir) {
+        File[] children = dir.listFiles();
+        if(children.length >0){
+            return false;
+        }else
+            return true;
     }
 
     private void startleaderBoard(HashMap<String, Integer> scoreList) {
