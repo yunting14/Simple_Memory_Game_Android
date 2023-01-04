@@ -1,40 +1,24 @@
 package iss.workshop.android_ca;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.provider.MediaStore;
 import android.view.View;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,39 +28,36 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity implements RecyclerViewInterface {
     EditText mURL; // where URL is placed
     RecyclerView recyclerView;
-    TextView textView;
     Button mFetchBtn;
     File dir;
     String url; // input URL (stocksnap.io)
-    File imageURLsFileDir; // not sure what this is for. seems like not used
     List <String> imgURLS = new ArrayList<>(); // list of 20 image Urls from website (eg stocksnap.io)
 
     List<Uri> uri; // list of 20 Uri referring to 20 jpg images in external storage
     HashMap<String, Integer> leaderBoard;
 
     // for placement of first 20 blank
-    Uri dummy = Uri.parse("https://cdn-icons-png.flaticon.com/512/59/59836.png");
-    List<Uri> dummies = new ArrayList<>();
+//    Uri dummy = Uri.parse("https://cdn-icons-png.flaticon.com/512/59/59836.png");
+//    List<Uri> dummies = new ArrayList<>();
 
     RecyclerAdapter adapter;
     Context context;
     ProgressBar progressBar;
     TextView downloadProgress;
-    private  static  final  int Read_Permission = 101;
     int currentProgress = 0;
 
     // YT added
@@ -144,7 +125,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         });
 
 
-        leaderBoard = LeaderBoard.loadLeaderBoard();
+        leaderBoard = loadLeaderBoard();
 
         mLeaderBoardBtn = findViewById(R.id.leaderBoard_button);
 
@@ -154,13 +135,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         if(leaderBoard!=null){
             mLeaderBoardBtn.setEnabled(true);
         }
+        mLeaderBoardBtn.setOnClickListener(view -> startleaderBoard(leaderBoard));
 
-        mLeaderBoardBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startleaderBoard(leaderBoard);
-            }
-        });
         // to set first download progress?
         if(mURL != null){
             SharedPreferences pref =
@@ -346,7 +322,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         ArrayList<Uri> loadImageuris = new ArrayList<>();
 
             for (int i = 1; i <= 20; i++) {
-            File imageFile = new File(dir, "Img" + String.valueOf(i) + ".jpg");
+            File imageFile = new File(dir, "Img" + i + ".jpg");
             Uri uriImg = Uri.fromFile(imageFile);
             loadImageuris.add(uriImg);
             }
@@ -357,7 +333,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
     // byte[] --> jpg file. Returns Uri of the jpg image
     protected Uri SaveImageJPG(int num, Bitmap bitmap){
-        File imageFile = new File(dir, "Img" + String.valueOf(num)+".jpg");
+        File imageFile = new File(dir, "Img" + num+ ".jpg");
         FileOutputStream out = null;
         try{
             out = new FileOutputStream(imageFile);
@@ -463,5 +439,29 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         // Launch Activity 2
             Intent intent = new Intent(this, MainActivity2.class);
             startActivity(intent);
+    }
+
+    public HashMap<String,Integer> loadLeaderBoard(){
+        HashMap<String,Integer> scoreList = new HashMap<>();
+        File lbs = getLeaderBoardFile();
+        try
+        {
+            FileInputStream fileInputStream  = new FileInputStream(lbs);
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+
+            scoreList = (HashMap) objectInputStream.readObject();
+            objectInputStream.close();
+            return scoreList;
+        }
+        catch(ClassNotFoundException | IOException | ClassCastException e) {
+            e.printStackTrace();
+        }
+        return scoreList;
+    }
+
+    public File getLeaderBoardFile(){
+        String filePath = "LBfolder";
+        String fileName = "LBS.txt";
+        return new File(getFilesDir(),  filePath + "/" + fileName);
     }
 }
