@@ -92,7 +92,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
     Dialog playerModePopup;
 
     private SoundPool soundPool;
-    int sound;
+    int sound, correctsound;
 
     // Game object
     Game game;
@@ -148,6 +148,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 .build();
 
         sound = soundPool.load(this,R.raw.flip,1);
+        correctsound = soundPool.load(this,R.raw.correct,1);
 
         // Sets the playing grid
         gridView = (GridView) findViewById(R.id.gridView);
@@ -256,7 +257,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             setLeftIn.setTarget(R.drawable.question_mark);
             setRightOut.start();
             setLeftIn.start();
-            PlaySound();
+            PlaySound(sound);
             img_view.setImageURI(imageList.get(position));
             return;
         }
@@ -264,7 +265,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         // second click
         // 1) Display 2nd image clicked. Always true
         if (firstImage_Pos != position) {
-//            PlaySound();
+            PlaySound(sound);
             secondImage_Pos = position;
             secondImageSelected = img_view;
 
@@ -305,8 +306,13 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 
     }
 
-    private void PlaySound() {
-        soundPool.play(sound,1,1,0,0,1);
+    private void PlaySound(int soundId) {
+        if(soundId == sound){
+
+            soundPool.play(sound,1,1,0,0,1);
+        }else{
+                soundPool.play(correctsound,1,1,0,0,1);
+        }
     }
 
     private void checkImagesAndScore(){
@@ -338,7 +344,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         }
         else{
             // if same
-
+            PlaySound(correctsound);
             firstImageSelected.setEnabled(false);
             secondImageSelected.setEnabled(false);
 
