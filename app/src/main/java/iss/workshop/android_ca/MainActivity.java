@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -53,10 +54,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
     List<Uri> uri; // list of 20 Uri referring to 20 jpg images in external storage
 
-    // for placement of first 20 blank
-//    Uri dummy = Uri.parse("https://cdn-icons-png.flaticon.com/512/59/59836.png");
-//    List<Uri> dummies = new ArrayList<>();
-
     RecyclerAdapter adapter;
     Context context;
     ProgressBar progressBar;
@@ -79,18 +76,16 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         dir =cw.getDir("imageDir",Context.MODE_PRIVATE);
 
+        if(checkFolderEmpty(dir)){
+            uri =LoadImageUri();
+        }else{
 
             uri = LoadImageUri();
 
-//        // Set layout
-//        for(int i=0; i<20;i++){
-//            dummies.add(dummy);
-//        }
+
             if (uri.size() == 20) {
                 adapter = new RecyclerAdapter((ArrayList<Uri>) uri, this);
             }
-
-
             // set 5 x 4
             recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 4));
             recyclerView.setAdapter(adapter);
@@ -99,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
             HomePage hm = new HomePage();
             hm.execute();
             context = this;
+        }
 
 
         // listening for fetch button to start download
@@ -107,12 +103,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
             @Override
             public void onClick(View view) {
-
-                adapter = new RecyclerAdapter((ArrayList<Uri>) uri, MainActivity.this); // empty uri
-                recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 4));
-                recyclerView.setAdapter(adapter);
-
-//                uri = new ArrayList<>();
                 currentProgress = 0;
                 url = mURL.getText().toString();
                 if(url == null || !(url.contains("https"))){
@@ -120,7 +110,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                     ,Toast.LENGTH_SHORT).show();
                 }
                 else{
-
+                    adapter = new RecyclerAdapter((ArrayList<Uri>) uri, MainActivity.this); // empty uri
+                    recyclerView.setLayoutManager(new GridLayoutManager(MainActivity.this, 4));
+                    recyclerView.setAdapter(adapter);
                     WebScrape ws = new WebScrape();
                     ws.execute();
                 }
@@ -130,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
 
         mLeaderBoardBtn = findViewById(R.id.leaderBoard_button);
-
        mLeaderBoardBtn.setOnClickListener(view->
                startleaderBoard(loadLeaderBoard()));
 
@@ -151,6 +142,14 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                 confirmBtnClicked();
             }
         });
+    }
+
+    private boolean checkFolderEmpty(File dir) {
+        File[] children = dir.listFiles();
+        if(children.length > 0){
+            return false;
+        }else
+            return true;
     }
 
     private void startleaderBoard(HashMap<String, Integer> scoreList) {
