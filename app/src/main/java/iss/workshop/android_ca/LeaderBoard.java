@@ -33,8 +33,6 @@ public class LeaderBoard extends AppCompatActivity {
     ArrayList<Integer>scores;
     Button backButt;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

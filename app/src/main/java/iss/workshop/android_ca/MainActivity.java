@@ -157,6 +157,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         ArrayList<String> playerNames = new ArrayList<>(scoreList.keySet());
         ArrayList<Integer> playerScores = new ArrayList<>(scoreList.values());
 
+//        List<Integer> playerTimeInt = playerScores.stream().map(Math::toIntExact).collect(Collectors.toList());
+
         Intent intent = new Intent(this, LeaderBoard.class);
         intent.putStringArrayListExtra("names", playerNames);
         intent.putIntegerArrayListExtra("scores", playerScores);
@@ -448,8 +450,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                 scoreList.put(tempName, splb.getInt(tempName,0));
             }
         }
+
+        // sort high to low
+//        HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
+//                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+//                        .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
+
+        // sort low to high
         HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
-                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+                .sorted(Map.Entry.comparingByValue()).collect(Collectors
                         .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
         return sortedHM;
     }
