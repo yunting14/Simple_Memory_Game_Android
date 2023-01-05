@@ -305,17 +305,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             }
         };
 
-        img_view.postDelayed(checker, 1200);
-
-//         when checking is happening, disable gridview. enable again after checking (1.5s later)
-
-//        Runnable enableGridView = new Runnable() {
-//            @Override
-//            public void run() {
-//                gridView.setEnabled(true);
-//            }
-//        };
-//        img_view.postDelayed(enableGridView, 100);
+        img_view.postDelayed(checker, 2000);
 
     }
 
@@ -393,26 +383,25 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         firstImage_Pos = -1;
 
         if (game.getGameMode() == 0){
+//            if (turn == 1) {
+//                turn = 2;
+//                tv_p1.setTextColor(Color.GRAY);
+//                tv_p2.setTextColor(Color.GREEN);
+//            } else if (turn == 2) {
+//                turn = 1;
+//                tv_p2.setTextColor(Color.GRAY);
+//                tv_p1.setTextColor(Color.GREEN);
+//            }
             if (turn == 1) {
                 turn = 2;
                 tv_p1.setTextColor(Color.GRAY);
-                tv_p2.setTextColor(Color.GREEN);
+                tv_p2.setTextColor(Color.parseColor("#6305dc"));
             } else if (turn == 2) {
                 turn = 1;
                 tv_p2.setTextColor(Color.GRAY);
-                tv_p1.setTextColor(Color.GREEN);
+                tv_p1.setTextColor(Color.parseColor("#6305dc"));
             }
-        if (turn == 1) {
-            turn = 2;
-            tv_p1.setTextColor(Color.GRAY);
-            tv_p2.setTextColor(Color.parseColor("#6305dc"));
-        } else if (turn == 2) {
-            turn = 1;
-            tv_p2.setTextColor(Color.GRAY);
-            tv_p1.setTextColor(Color.parseColor("#6305dc"));
         }
-
-    }
     }
 
     public void fillArray() {
@@ -600,15 +589,18 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         Boolean p1Win = true;
 
         if(game.getPlayer2_name() != null){
-            // multi
-            p1Win = game.getPlayer1_score()> game.getPlayer2_score();
-
-        }else if(game.getPlayer2_name() == null && game.getPlayer2_score() != 0){
-            // single
-            int temp = game.getPlayer1_score() + game.getPlayer2_score();
-            game.setPlayer1_score(temp);
-            game.setPlayer2_score(0);
+            return false;
         }
+//        if(game.getPlayer2_name() != null){
+//            // multi
+//            p1Win = game.getPlayer1_score()> game.getPlayer2_score();
+//
+//        }else if(game.getPlayer2_name() == null && game.getPlayer2_score() != 0){
+//            // single
+//            int temp = game.getPlayer1_score() + game.getPlayer2_score();
+//            game.setPlayer1_score(temp);
+//            game.setPlayer2_score(0);
+//        }
 
         if(leaderBoard2 == null){
             leaderBoard2 = new HashMap<>();
