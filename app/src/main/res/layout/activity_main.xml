@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:scrollbars="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/LLMain1"
+        app:layout_constraintTop_toTopOf="parent"
         android:orientation="horizontal">
 
         <TextView
@@ -31,6 +34,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/LLMain2"
+        app:layout_constraintTop_toBottomOf="@+id/LLMain1"
         android:padding="20px"
         android:orientation="horizontal">
 
@@ -63,8 +68,10 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="0dp"
         android:orientation="horizontal"
+        android:id="@+id/LLMain3"
+        app:layout_constraintTop_toBottomOf="@+id/LLMain2"
         android:padding="5px"
         android:weightSum="1.0">
 
@@ -72,7 +79,7 @@
             android:id="@+id/urlTxt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
             android:maxLines="1"
             android:ems="10"
             android:hint="Enter your URL here"
@@ -83,7 +90,7 @@
             android:id="@+id/btnFetch"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
             android:layout_weight="0.3"
             android:ems="10"
             android:textSize="18dp"
@@ -98,16 +105,18 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/LLMain3"
         android:layout_marginTop="5dp"
         android:scrollbarStyle="outsideInset"
         android:paddingLeft="20px"
         android:paddingRight="20px"
-         />
-    
+        />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView">
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="match_parent"
@@ -139,6 +148,8 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/LLMain4"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerView"
         android:gravity="center"
         android:orientation="horizontal">
 
@@ -153,10 +164,7 @@
             android:text="Confirm"
             android:textSize="18dp"
             android:textStyle="bold"
-            android:visibility="invisible" />
-
+            android:visibility="invisible"
+            android:layout_marginTop="0dp"/>
     </LinearLayout>
-
-
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

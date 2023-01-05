@@ -305,8 +305,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             }
         };
 
-        img_view.postDelayed(checker, 2000);
-
+        img_view.postDelayed(checker, 1200);
     }
 
     private void PlaySound(int soundId) {
