@@ -33,6 +33,7 @@ import android.widget.Toast;
 import java.io.File;
 
 import java.net.URI;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -206,12 +207,11 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 ////                }
 ////            }.start();
 
-            // default layout is multi-player. if single player, change layout
-            // YT - not working... 9.10pm
             if (game.getGameMode() == 1){
                 TextView gameMode_tv = findViewById(R.id.mode_of_game);
                 gameMode_tv.setText("SINGLE MODE");
-                tv_p1.setVisibility(View.INVISIBLE);
+                tv_p1.setVisibility(View.VISIBLE);
+                tv_p1.setGravity(View.TEXT_ALIGNMENT_CENTER);
                 tv_p2.setVisibility(View.GONE);
             }
             else if (game.getGameMode() == 0){
@@ -233,6 +233,14 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             chronometer.stop();
             pauseOffset = SystemClock.elapsedRealtime()-chronometer.getBase();
             running = false;
+
+            // set the timing for the single player
+            long timing = pauseOffset / (1000); // convert milli to seconds
+            DecimalFormat df = new DecimalFormat("#.###"); // format to 3 dp
+            df.format(timing);
+            if (game.getGameMode() == 1){
+                game.setPlayer1_time(Math.toIntExact(timing));
+            }
         }
     }
     private void resetTimer(){
@@ -345,46 +353,52 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         else{
             // if same
             PlaySound(correctsound);
-//            firstImageSelected.setEnabled(false);
-//            secondImageSelected.setEnabled(false);
             firstImageSelected.setOnClickListener(null);
             secondImageSelected.setOnClickListener(null);
 
             matched_imageViews.add(firstImageSelected);
             matched_imageViews.add(secondImageSelected);
 
-            // give score
+            // for multi mode: give score
             if (turn == 1) {
                 p1_score++;
-                tv_p1.setText(game.getPlayer1_name() + " : " + p1_score);
+
+                if (game.getGameMode() == 0){
+                    tv_p1.setText(game.getPlayer1_name() + " : " + p1_score);
+                }
             } else if (turn == 2) {
                 p2_score++;
-                tv_p2.setText(game.getPlayer2_name() + " : " + p2_score);
+
+                if (game.getGameMode() == 0){
+                    tv_p2.setText(game.getPlayer2_name() + " : " + p2_score);
+                }
             }
 
-            // check if there is a winner
             if(p1_score+p2_score==6){
                 game.setPlayer1_score(p1_score);
                 game.setPlayer2_score(p2_score);
+
                 pauseTimer();
                 resetTimer();
                 showGameResults();
-
             }
         }
 
         // finally, reset firstImage clicked position and change turn
         firstImage_Pos = -1;
 
-        if (turn == 1) {
-            turn = 2;
-            tv_p1.setTextColor(Color.GRAY);
-            tv_p2.setTextColor(Color.GREEN);
-        } else if (turn == 2) {
-            turn = 1;
-            tv_p2.setTextColor(Color.GRAY);
-            tv_p1.setTextColor(Color.GREEN);
+        if (game.getGameMode() == 0){
+            if (turn == 1) {
+                turn = 2;
+                tv_p1.setTextColor(Color.GRAY);
+                tv_p2.setTextColor(Color.GREEN);
+            } else if (turn == 2) {
+                turn = 1;
+                tv_p2.setTextColor(Color.GRAY);
+                tv_p1.setTextColor(Color.GREEN);
+            }
         }
+
     }
 
     public void fillArray() {
@@ -419,13 +433,29 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
     }
 
     private void showGameResults(){
+
+        String singleMode_msg = "Game Over!\n"
+                                + game.getPlayer1_name() + "'s timing: \n"
+                                + game.getPlayer1_time() + " sec";
+
+        String multiMode_msg = "Game Over!\n"
+                + game.getPlayer1_name() + " : " + p1_score
+                + "\n" + game.getPlayer2_name() + " : " + p2_score;
+
+        String gameEnd_msg = "";
+
+        if (game.getGameMode() == 1){
+            gameEnd_msg = singleMode_msg;
+        }
+        else if (game.getGameMode() == 0){
+            gameEnd_msg = multiMode_msg;
+        }
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity2.this);
         alertDialogBuilder
-                .setMessage("Game Over!\n"
-                        + game.getPlayer1_name() + " : " + p1_score
-                        + "\n" + game.getPlayer2_name() + " : " + p2_score)
+                .setMessage(gameEnd_msg)
                 .setCancelable(false)
-                .setPositiveButton("NEW", new DialogInterface.OnClickListener() {
+                .setPositiveButton("EXIT", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         Intent intent = new Intent(getApplicationContext(),MainActivity.class);
@@ -433,10 +463,11 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                         finish();
                     }
                 })
-                .setNegativeButton("EXIT", new DialogInterface.OnClickListener() {
+                .setNegativeButton("RESTART", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        finish();
+                        Intent intent = new Intent(getApplicationContext(),MainActivity2.class);
+                        startActivity(intent);
                     }
                 });
 
@@ -554,20 +585,25 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         Boolean p1Win = true;
 
         if(game.getPlayer2_name() != null){
+            // multi
             p1Win = game.getPlayer1_score()> game.getPlayer2_score();
+
         }else if(game.getPlayer2_name() == null && game.getPlayer2_score() != 0){
+            // single
             int temp = game.getPlayer1_score() + game.getPlayer2_score();
             game.setPlayer1_score(temp);
             game.setPlayer2_score(0);
         }
+
         if(leaderBoard2 == null){
             leaderBoard2 = new HashMap<>();
         }
+
         if(leaderBoard2.size() < 10){
             if(p1Win){
-                leaderBoard2.put(game.getPlayer1_name(),game.getPlayer1_score());
+                leaderBoard2.put(game.getPlayer1_name(),Math.toIntExact(game.getPlayer1_time()));
             }else{
-                leaderBoard2.put(game.getPlayer2_name(),game.getPlayer2_score());
+                leaderBoard2.put(game.getPlayer2_name(),Math.toIntExact(game.getPlayer2_time()));
             }
             saveLeaderBoard(leaderBoard2);
             leaderBoard2 = loadLeaderBoard();
@@ -576,10 +612,10 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 
         if(leaderBoard2.size()==10){
 
-            String cPName = new ArrayList<>(leaderBoard2.keySet()).get(9);
-            int cPScore = leaderBoard2.get(cPName);
+            String cPName = new ArrayList<>(leaderBoard2.keySet()).get(9); // get the one at the lowest position
+            Integer cPTime = leaderBoard2.get(cPName);
 
-            if(game.getPlayer1_score()>cPScore || game.getPlayer2_score()>cPScore){
+            if(game.getPlayer1_score()>cPTime || game.getPlayer2_score()>cPTime){
                 leaderBoard2.remove(cPName);
                 saveLeaderBoard(leaderBoard2);
                 IsAchieveLeaderBoard();
@@ -591,12 +627,20 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 
     protected void saveLeaderBoard(@NonNull HashMap<String,Integer> scoreList){
         SharedPreferences splb = getSharedPreferences("leaderBoard", MODE_PRIVATE);
+
         SharedPreferences.Editor editor = splb.edit();
+
+//        HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
+//                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+//                        .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
+
         HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
-                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+                .sorted(Map.Entry.comparingByValue()).collect(Collectors
                         .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
+
         List<String> lbNames = new ArrayList<>(sortedHM.keySet());
         List<Integer> lbScores = new ArrayList<>(sortedHM.values());
+
         for(int i=0; i<sortedHM.size(); i++){
             editor.putInt(lbNames.get(i),lbScores.get(i));
             editor.putStringSet("lbNames", sortedHM.keySet());
@@ -616,9 +660,14 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 scoreList.put(nam, splb.getInt(nam,0));
             }
         }
+//        HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
+//                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+//                        .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
         HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
-                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+                .sorted(Map.Entry.comparingByValue()).collect(Collectors
                         .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
+
+
         return sortedHM;
     }
 

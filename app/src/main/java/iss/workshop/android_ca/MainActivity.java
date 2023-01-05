@@ -78,10 +78,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
         if(checkFolderEmpty(dir)){
             uri =LoadImageUri();
-        }else{
-
+        }
+        else {
             uri = LoadImageUri();
-
+        // Set layout
 
             if (uri.size() == 20) {
                 adapter = new RecyclerAdapter((ArrayList<Uri>) uri, this);
@@ -103,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
             @Override
             public void onClick(View view) {
+
+//                uri = new ArrayList<>();
+
                 currentProgress = 0;
                 url = mURL.getText().toString();
                 if(url == null || !(url.contains("https"))){
@@ -146,7 +149,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
     private boolean checkFolderEmpty(File dir) {
         File[] children = dir.listFiles();
-        if(children.length > 0){
+
+        if(children.length >0){
             return false;
         }else
             return true;
@@ -155,6 +159,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
     private void startleaderBoard(HashMap<String, Integer> scoreList) {
         ArrayList<String> playerNames = new ArrayList<>(scoreList.keySet());
         ArrayList<Integer> playerScores = new ArrayList<>(scoreList.values());
+
+//        List<Integer> playerTimeInt = playerScores.stream().map(Math::toIntExact).collect(Collectors.toList());
 
         Intent intent = new Intent(this, LeaderBoard.class);
         intent.putStringArrayListExtra("names", playerNames);
@@ -447,8 +453,15 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
                 scoreList.put(tempName, splb.getInt(tempName,0));
             }
         }
+
+        // sort high to low
+//        HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
+//                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+//                        .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
+
+        // sort low to high
         HashMap<String, Integer> sortedHM = scoreList.entrySet().stream()
-                .sorted((x, y)-> y.getValue().compareTo(x.getValue())).collect(Collectors
+                .sorted(Map.Entry.comparingByValue()).collect(Collectors
                         .toMap(Map.Entry::getKey,Map.Entry::getValue,(e1, e2) -> e1, LinkedHashMap::new));
         return sortedHM;
     }

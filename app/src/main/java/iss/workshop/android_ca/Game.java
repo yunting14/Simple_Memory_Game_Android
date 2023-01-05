@@ -6,8 +6,8 @@ public class Game {
 
     private String player1_name;
     private String player2_name;
-    private long player1_time;
-    private long player2_time;
+    private int player1_time;
+    private int player2_time;
     private int player1_score;
     private int player2_score;
     private int gameMode; // 0 for multi, 1 for single
@@ -35,7 +35,7 @@ public class Game {
         return player1_time;
     }
 
-    public void setPlayer1_time(long player1_time) {
+    public void setPlayer1_time(int player1_time) {
         this.player1_time = player1_time;
     }
 
@@ -43,7 +43,7 @@ public class Game {
         return player2_time;
     }
 
-    public void setPlayer2_time(long player2_time) {
+    public void setPlayer2_time(int player2_time) {
         this.player2_time = player2_time;
     }
 
