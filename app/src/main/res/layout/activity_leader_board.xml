@@ -69,12 +69,8 @@
         <TextView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-<<<<<<< HEAD
-            android:text="Time"
-=======
             android:text="Score"
             android:textAllCaps="true"
->>>>>>> 32f379e7b46d8e45c46af5e1d5c381c79697a2d2
             android:layout_weight="1"
             android:background="#CEDAA733"
             android:padding="5dp"
