@@ -118,7 +118,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         leaderBoard2 = loadLeaderBoard();
 
         //starts from player 1
-        tv_p1.setTextColor(Color.GREEN);
+        tv_p1.setTextColor(Color.parseColor("#6305dc"));
         tv_p2.setTextColor(Color.GRAY);
 
         // this fills a list of 12 images, with the 2 selected images from internal storage
@@ -180,15 +180,19 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         game = new Game();
     }
 
+
+
     // FOR START GAME BUTTON
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.button_StartGame){
 
             gridView.setEnabled(true);
+            Button startBtn = findViewById(R.id.button_StartGame);
+            startBtn.setVisibility(view.GONE);
 
             Button gameModeBtn = findViewById(R.id.btn_ChangeMode);
-            gameModeBtn.setEnabled(false);
+            gameModeBtn.setVisibility(view.GONE);
             view.setEnabled(false); // view = start button
 
             timer = findViewById(R.id.playtime);
@@ -220,6 +224,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             }
         }
     }
+
     //Start Timer
     private void startTimer() {
         if(!running){
@@ -303,7 +308,6 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 <<<<<<< HEAD
         img_view.postDelayed(checker, 1200);
 =======
-        img_view.postDelayed(checker, 2000);
 >>>>>>> d2da0a11c578905430c2ff63355fa225925dd45a
 
 //         when checking is happening, disable gridview. enable again after checking (1.5s later)
@@ -357,8 +361,6 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
         else{
             // if same
             PlaySound(correctsound);
-//            firstImageSelected.setEnabled(false);
-//            secondImageSelected.setEnabled(false);
             firstImageSelected.setOnClickListener(null);
             secondImageSelected.setOnClickListener(null);
 
@@ -403,8 +405,17 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 tv_p2.setTextColor(Color.GRAY);
                 tv_p1.setTextColor(Color.GREEN);
             }
+        if (turn == 1) {
+            turn = 2;
+            tv_p1.setTextColor(Color.GRAY);
+            tv_p2.setTextColor(Color.parseColor("#6305dc"));
+        } else if (turn == 2) {
+            turn = 1;
+            tv_p2.setTextColor(Color.GRAY);
+            tv_p1.setTextColor(Color.parseColor("#6305dc"));
         }
 
+    }
     }
 
     public void fillArray() {
@@ -518,7 +529,8 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 player1_namefield.setEnabled(true);
 //                player2_namefield.setEnabled(false);
                 player2_namefield.setVisibility(View.GONE);
-                confirmBtn.setEnabled(true);
+                confirmBtn.setVisibility(view.VISIBLE);
+
 
 
                 // set game mode for game object, instantiated oncreate
@@ -532,7 +544,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 player1_namefield.setEnabled(true);
                 player2_namefield.setVisibility(View.VISIBLE);
                 player2_namefield.setEnabled(true);
-                confirmBtn.setEnabled(true);
+                confirmBtn.setVisibility(view.VISIBLE);
 
                 // set game mode for game object, instantiated oncreate
                 game.setGameMode(0);
@@ -676,5 +688,6 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
 
         return sortedHM;
     }
-
 }
+
+

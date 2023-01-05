@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="350dp"
-    android:layout_height="475dp"
+    android:layout_height="460dp"
     android:padding="5dp"
     android:layout_gravity="center"
     android:background="@drawable/border_shadow">
@@ -15,6 +15,7 @@
         android:text="X"
         android:textStyle="bold"
         android:gravity="center"
+        android:textColor="#880808"
         android:layout_gravity="end"
         android:background="@drawable/circle_for_cross"/>
 
@@ -33,11 +34,12 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:textSize="30dp"
-            android:textColor="@color/game_purple"
+            android:textColor="@color/white"
             android:layout_marginBottom="15dp"
+            android:fontFamily="@font/gameplayfin"
             />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/single_player_btn"
             android:text="SINGLE MODE"
             android:layout_width="200dp"
@@ -45,18 +47,22 @@
             android:layout_gravity="center"
             android:background="@drawable/round_btn"
             android:textSize="20dp"
+            android:padding="15dp"
+            android:textStyle="bold"
             android:layout_marginTop="15dp"
             />
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/multi_player_btn"
             android:text="VS MODE"
             android:layout_width="200dp"
+            android:padding="15dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@drawable/round_btn"
             android:textSize="20dp"
-            android:layout_marginTop="15dp"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
             />
     </LinearLayout>
 
@@ -72,8 +78,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLength="20"
+            android:gravity="center_horizontal"
             android:hint="Enter player 1 name"
-            android:textColorHighlight="@color/game_purple"
+            android:textColorHint="@color/white"
+            android:textStyle="italic"
+            android:textColorHighlight="@color/white"
             android:layout_marginTop="15dp"
             android:enabled="false"/>
 
@@ -82,21 +91,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLength="20"
+            android:gravity="center_horizontal"
+            android:textColorHint="@color/white"
+            android:textStyle="italic"
             android:hint="Enter player 2 name"
             android:textColorHighlight="@color/game_purple"
             android:layout_marginTop="15dp"
             android:enabled="false"/>
 
-        <Button
+        <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/name_confirm_btn"
             android:text="Confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@drawable/round_btn"
-            android:textSize="15dp"
+            android:textSize="18dp"
+            android:padding="15dp"
             android:layout_marginTop="15dp"
-            android:enabled="false"
+            android:textStyle="bold"
+            android:visibility="invisible"
             />
     </LinearLayout>
 

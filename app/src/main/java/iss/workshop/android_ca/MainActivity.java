@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         }else{
 
             uri = LoadImageUri();
-
+        // Set layout
 
             if (uri.size() == 20) {
                 adapter = new RecyclerAdapter((ArrayList<Uri>) uri, this);
@@ -103,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
             @Override
             public void onClick(View view) {
+
+//                uri = new ArrayList<>();
+
                 currentProgress = 0;
                 url = mURL.getText().toString();
                 if(url == null || !(url.contains("https"))){
@@ -146,7 +149,8 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
 
     private boolean checkFolderEmpty(File dir) {
         File[] children = dir.listFiles();
-        if(children.length > 0){
+
+        if(children.length >0){
             return false;
         }else
             return true;
@@ -375,9 +379,10 @@ public class MainActivity extends AppCompatActivity implements RecyclerViewInter
         Button btnSelect = findViewById(R.id.cfm6_button);
         if (selected_6Uri.size() == 6){
             btnSelect.setEnabled(true);
+            btnSelect.setVisibility(view.VISIBLE);
         }
         else{
-            btnSelect.setEnabled(false);
+            btnSelect.setVisibility(view.INVISIBLE);
         }
 
         // Indicate how many images are selected
