@@ -517,8 +517,6 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
                 player2_namefield.setVisibility(View.GONE);
                 confirmBtn.setVisibility(view.VISIBLE);
 
-
-
                 // set game mode for game object, instantiated oncreate
                 game.setGameMode(1);
             }
