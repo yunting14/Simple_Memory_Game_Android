@@ -305,10 +305,7 @@ public class MainActivity2 extends AppCompatActivity implements AdapterView.OnIt
             }
         };
 
-<<<<<<< HEAD
         img_view.postDelayed(checker, 1200);
-=======
->>>>>>> d2da0a11c578905430c2ff63355fa225925dd45a
 
 //         when checking is happening, disable gridview. enable again after checking (1.5s later)
 
