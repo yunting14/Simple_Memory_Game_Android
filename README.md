@@ -1,7 +1,7 @@
-# Branched from Master
-> Bug fixes | YT 2 Jan 8.15pm
-1. Disable other pictures when checking is in process
-2. Disable start & game mode buttons when game in progress
-3. Fix default layout
-4. Fix pop-up
-5. Highlight selected images
+### Simple Memory Game
+This is an Android app written in Java. Features:
+- Play a card-matching game
+- Single-player and multi-player mode
+- Download pictures from websites to customize your playing board
+
+[Video demo here](https://drive.google.com/file/d/1cZkDWZ9qV9Ge6sPlhRZswm-UE6oO4Eph/view?usp=sharing)
